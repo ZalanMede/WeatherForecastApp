@@ -7,7 +7,7 @@ function getWeatherIcon(type) {
     }
 }
 
-function loadWeather() {
+function loadWeather(isLoggedIn) {
     const forecastContainer = document.getElementById('forecast-container');
 
     const weatherData = [
@@ -58,7 +58,7 @@ function loadWeather() {
         cardBody.appendChild(precip);
         card.appendChild(cardBody);
 
-        if (data.day !== 'Today') {
+        if (data.day !== 'Today' && isLoggedIn == true) {
             card.setAttribute('tabindex', '0');
             card.setAttribute('data-bs-toggle', 'popover');
             card.setAttribute('data-bs-trigger', 'hover focus');
@@ -82,8 +82,101 @@ function loadWeather() {
         forecastContainer.appendChild(col);
     });
     
-    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
-        sanitize: false
+    if (isLoggedIn) {
+        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
+            sanitize: false
+        }));
+        renderWeatherCalendar(weatherData);
+    }
+}
+
+function renderWeatherCalendar(results) {
+    var calendarEl = document.getElementById('calendar');
+
+    colorScheme = localStorage.getItem('SCThemeIsDark') || 'light';
+
+    /*
+    let myEvents = results.map((results => {
+        return {
+            title: results.step_count + ' steps',
+            start: results.date,
+        }
     }));
+    */
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        colorScheme: 'dark',
+        initialDate: new Date(),
+        initialView: 'dayGridMonth',
+        nowIndicator: true,
+        headerToolbar: {
+            left: 'prevYear,prev,next,nextYear today',
+            center: 'title',
+            right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+        navLinks: true, // can click day/week names to navigate views
+        editable: false,
+        selectable: false,
+        selectMirror: true,
+        dayMaxEvents: true, // allow "more" link when too many events
+        events: [
+        {
+          title: 'All Day Event',
+          start: '2023-01-01',
+        },
+        {
+          title: 'Long Event',
+          start: '2023-01-07',
+          end: '2023-01-10'
+        },
+        {
+          groupId: 999,
+          title: 'Repeating Event',
+          start: '2023-01-09T16:00:00'
+        },
+        {
+          groupId: 999,
+          title: 'Repeating Event',
+          start: '2023-01-16T16:00:00'
+        },
+        {
+          title: 'Conference',
+          start: '2023-01-11',
+          end: '2023-01-13'
+        },
+        {
+          title: 'Meeting',
+          start: '2023-01-12T10:30:00',
+          end: '2023-01-12T12:30:00'
+        },
+        {
+          title: 'Lunch',
+          start: '2023-01-12T12:00:00'
+        },
+        {
+          title: 'Meeting',
+          start: '2023-01-12T14:30:00'
+        },
+        {
+          title: 'Happy Hour',
+          start: '2023-01-12T17:30:00'
+        },
+        {
+          title: 'Dinner',
+          start: '2023-01-12T20:00:00'
+        },
+        {
+          title: 'Birthday Party',
+          start: '2023-01-13T07:00:00'
+        },
+        {
+          title: 'Click for Google',
+          url: 'http://google.com/',
+          start: '2023-01-28'
+        }
+      ],
+    });
+
+    calendar.render();
 }

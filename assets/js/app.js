@@ -7,12 +7,13 @@ async function navigate(page, viewType, sleepTime=0) {
     }
 
     main.innerHTML = await (await fetch(`views/${viewType}/${page}.html`)).text();
-    console.log(`Navigating to... ${viewType}/${page}`)
-    switch (page, viewType){
-        case "weather", "user":
-            loadWeather();
+    console.log(`Navigating to... ${viewType}/${page}`);
+    switch (page) {
+        case "weather":
+            loadWeather(viewType == "user" ? true : false);
             break;
         default:
+            console.log("NOT RUN");
             break;
     }
 }
@@ -35,8 +36,12 @@ function loadTheme() {
     }
 }
 
+function logOut() {
+    console.log("LOGGING OUT");
+}
+
 // -- Main --
 
 loadTheme();
 
-navigate('weather', "user")
+navigate('home', "guest");
