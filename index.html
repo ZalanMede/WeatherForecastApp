@@ -15,71 +15,70 @@
 <body class="bg-body text-body">
     <header class="app-header d-flex align-items-center px-3 bg-body border-bottom border-secondary-subtle shadow-sm">
         <span class="fw-bold text-body">Simple Weather App</span>
-        <div class="ms-auto d-flex align-items-center gap-2">
-            <span class="text-body fw-semibold small">Gazsi</span>
-            <button class="btn btn-outline-secondary btn-sm" title="Logout" onclick="logOut()"><i class="bi bi-box-arrow-right"></i></button>
+        <div id="guestUserCtrlEl" class="ms-auto d-flex align-items-center gap-2">
+            <button class="btn btn-outline-secondary btn-md" title="Register" data-bs-toggle="modal" data-bs-target="#regModal"><i class="bi bi-person-plus"></i></button>
+            <button class="btn btn-outline-secondary btn-md" title="Login" data-bs-toggle="modal" data-bs-target="#logModal"><i class="bi bi-box-arrow-right"></i></button>
+        </div>
+        <div id="loggedInUserCtrlEl" class="ms-auto d-flex align-items-center gap-2 hide">
+            <span id="loggedInUserName" class="text-body fw-semibold small">Gazsi</span>
+            <button class="btn btn-outline-secondary btn-md" title="Logout" onclick="logOut()"><i class="bi bi-box-arrow-right"></i></button>
         </div>
     </header>
 
     <div class="content-wrapper">
-
         <nav class="sidebar bg-body border-end border-secondary-subtle d-flex flex-column pt-2">
             <ul class="nav flex-column mb-auto w-100">
 
-                <!-- Everyone can see -->
-                <li class="nav-item">
-                    <a class="nav-link text-body" href="#" onclick="navigate('home', 'guest');">
-                        <i class="bi bi-house-door"></i>
-                        <span class="nav-text">Home</span>
-                    </a>
-                </li>
-                <!-- Guest/Logged Out Only -->
-                <li class="nav-item">
-                    <a class="nav-link text-body" href="#" onclick="navigate('login', 'guest');">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        <span class="nav-text">Login</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-body" href="#" onclick="navigate('register', 'guest');">
-                        <i class="bi bi-person-fill-add"></i>
-                        <span class="nav-text">Register</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-body" href="#" onclick="navigate('weather', 'guest');">
-                        <i class="bi bi-cloud-fill"></i>
-                        <span class="nav-text">Guest Weather</span>
-                    </a>
-                </li>
+                <!-- Guest Menu -->
+                <div id="baseMenu">
+                    <li class="nav-item">
+                        <a class="nav-link text-body" href="#" onclick="navigate('home', 'guest');">
+                            <i class="bi bi-house-door"></i>
+                            <span class="nav-text">Home</span>
+                        </a>
+                    </li>
+                    <!-- Guest/Logged Out Only -->
+                    <li class="nav-item">
+                        <a class="nav-link text-body" href="#" onclick="navigate('weather', 'guest');">
+                            <i class="bi bi-cloud-fill"></i>
+                            <span class="nav-text">Guest Weather</span>
+                        </a>
+                    </li>
+                </div>
+                
 
-                <!-- User & Admin -->
-                <li class="nav-item">
-                    <a class="nav-link text-body" href="#" onclick="navigate('weather', 'user');">
-                        <i class="bi bi-cloud-fill"></i>
-                        <span class="nav-text">Weather</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-body" href="#" onclick="navigate('profile', 'user');">
-                        <i class="bi bi-person-fill-gear"></i>
-                        <span class="nav-text">Edit Profile</span>
-                    </a>
-                </li>
+                <!-- User & Admin Menu -->
+                <div id="userMenu">
+                    <li class="nav-item">
+                        <a class="nav-link text-body" href="#" onclick="navigate('weather', 'user');">
+                            <i class="bi bi-cloud-fill"></i>
+                            <span class="nav-text">Weather</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-body" href="#" onclick="navigate('profile', 'user');">
+                            <i class="bi bi-person-fill-gear"></i>
+                            <span class="nav-text">Edit Profile</span>
+                        </a>
+                    </li>
+                </div>
+                
 
                 <!-- Admin Only -->
-                <li class="nav-item">
-                    <a class="nav-link text-body" href="#" onclick="navigate('forecasts', 'admin');">
-                        <i class="bi bi-cloud-arrow-up-fill"></i>
-                        <span class="nav-text">Manage Forecasts</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-body" href="#" onclick="navigate('users', 'admin');">
-                        <i class="bi bi-people-fill"></i>
-                        <span class="nav-text">Manage Users</span>
-                    </a>
-                </li>
+                <div id="adminMenu">
+                    <li class="nav-item">
+                        <a class="nav-link text-body" href="#" onclick="navigate('forecasts', 'admin');">
+                            <i class="bi bi-cloud-arrow-up-fill"></i>
+                            <span class="nav-text">Manage Forecasts</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-body" href="#" onclick="navigate('users', 'admin');">
+                            <i class="bi bi-people-fill"></i>
+                            <span class="nav-text">Manage Users</span>
+                        </a>
+                    </li>
+                </div>
             </ul>
             <div class="w-100 p-3 d-flex justify-content-center mb-2">
                 <button id="themeToggleBtn" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="toggleTheme()" title="Toggle Theme">
@@ -95,20 +94,81 @@
         <small class="text-body-secondary fw-light">Bajai SZC Türr István Technikum - Szoft 2026</small>
     </footer>
 
-    <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-body border-secondary-subtle">
+    <div class="modal fade" id="logModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:400px">
+            <div class="modal-content p-0">
                 <div class="modal-header">
-                    <h5 class="modal-title text-body" id="locationModalLabel">Change Location</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title fw-bold" style="font-size:1.1rem"><i class="bi bi-box-arrow-in-right me-2" style="color:var(--bs-info)"></i>Log In</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <input type="text" class="form-control" placeholder="Enter city or zip code">
+                <div class="modal-body py-4 px-4">
+                    <form id="loginForm" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label small" style="color:var(--bs-secondary-color)">Email</label>
+                            <input id="logEmail" type="email" class="form-control form-dk" placeholder="you@example.com" required >
+                            <div class="invalid-feedback small"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small" style="color:var(--bs-secondary-color)">Password</label>
+                            <input id="logPass" type="password" class="form-control form-dk" placeholder="Your password" required minlength="6">
+                            <div class="invalid-feedback small"></div>
+                        </div>
+                        <button type="submit" class="btn btn-go w-100 py-2 mt-1">Sign In</button>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Save Changes</button>
+                    <p class="small" style="font-size:1.1rem">Don't have an account yet?</p>
+                    <button class="btn btn-go-outline px-3 py-1" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#regModal">Register</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="regModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:400px">
+            <div class="modal-content p-0">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" style="font-size:1.1rem"><i class="bi bi-person-plus me-2" style="color:var(--bs-info)"></i>Create Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body py-4 px-4">
+                    <form id="regForm" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label small" style="color:var(--bs-secondary-color)">Full Name</label>
+                            <input id="regName" type="text" class="form-control form-dk" required>
+                            <div class="invalid-feedback small"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small" style="color:var(--bs-secondary-color)">Email</label>
+                            <input id="regEmail" type="email" title="regEmail" class="form-control form-dk" required>
+                            <div class="invalid-feedback small"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small" style="color:var(--bs-secondary-color)">Password</label>
+                            <input id="regPass" type="password" class="form-control form-dk" required minlength="6">
+                            <div class="invalid-feedback small"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small" style="color:var(--bs-secondary-color)">Confirm Password</label>
+                            <input id="regConf" type="password" class="form-control form-dk" required>
+                            <div class="invalid-feedback small"></div>
+                        </div>
+                        <button type="submit" class="btn btn-go w-100 py-2 mt-1">Create Account</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <p class="small" style="font-size:1.1rem">Already have an account?</p>
+                    <button class="btn btn-go-outline px-3 py-1" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#logModal">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+        <div id="toast" class="toast align-items-center border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMsg"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>
@@ -122,6 +182,8 @@
 
     <!-- Controllers -->
     <script src="controllers/weatherCtrl.js"></script>
+    <script src="controllers/homeCtrl.js"></script>
+    <script src="controllers/userCtrl.js"></script>
 
     <!-- App.js -->
     <script src="assets/js/app.js"></script>

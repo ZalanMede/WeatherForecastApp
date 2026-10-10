@@ -1,1 +1,183 @@
-<h3>HOME</h3>
+<section class="hero">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="glow glow-3"></div>
+    <div class="container position-relative" style="z-index:1">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5 anim-up">
+                <p class="text-uppercase small mb-2" style="color:var(--bs-info);letter-spacing:.12em;font-weight:600">Weather information</p>
+                <h1 class="hero-title mb-3">Simple weather,<br><span class="hl">but made up</span></h1>
+                <p class="hero-sub mb-4">
+                    Historical analytics and 7-day forecasts for temperature, humidity, pressure, UV index, and wind.<br>All data is made up, this is just a working concept
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <button class="btn btn-go px-4 py-2" onclick="navigate('weather','guest')">View Weather</button>
+                    <a href="#features" class="btn btn-go-outline px-4 py-2">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-7 anim-up d2">
+                <div class="wcard anim-float" style="max-width:540px;margin-left:auto">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <p class="mb-1" style="color:var(--bs-secondary-color);font-size:.85rem"><i class="bi bi-geo-alt-fill me-1" style="color:var(--bs-info)"></i> Your Location</p>
+                            <div class="wcard-temp">24<span class="unit">°C</span></div>
+                            <p class="mb-0" style="color:var(--bs-secondary-color);font-size:.9rem">Partly Cloudy</p>
+                        </div>
+                        <div style="font-size:3.2rem;color:var(--bs-warning);line-height:1"><i class="bi bi-cloud-sun-fill"></i></div>
+                    </div>
+                    <hr style="border-color:var(--bs-border-color);margin:1rem 0">
+                    <div class="row g-2">
+                        <div class="col-4"><div class="stat-box"><div class="val" style="color:var(--bs-info)">18°</div><div class="lbl">Min Temp</div></div></div>
+                        <div class="col-4"><div class="stat-box"><div class="val" style="color:var(--bs-warning)">29°</div><div class="lbl">Max Temp</div></div></div>
+                        <div class="col-4"><div class="stat-box"><div class="val">62%</div><div class="lbl">Humidity</div></div></div>
+                        <div class="col-4"><div class="stat-box violet"><div class="val">1013</div><div class="lbl">Pressure hPa</div></div></div>
+                        <div class="col-4"><div class="stat-box warm"><div class="val">5</div><div class="lbl">UV Index</div></div></div>
+                        <div class="col-4"><div class="stat-box"><div class="val">NE 12</div><div class="lbl">Wind km/h</div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="features" class="py-4">
+    <div class="container">
+        <div class="row g-3 anim-up d3">
+            <div class="col-md-4">
+                <div class="feat-card">
+                    <div class="feat-icon" style="background:rgba(var(--bs-info-rgb),.1);color:var(--bs-info)"><i class="bi bi-thermometer-half"></i></div>
+                    <h6 class="fw-bold mb-1">Current Weather</h6>
+                    <p class="small mb-2" style="color:var(--bs-secondary-color)">Temperature, min &amp; max, humidity, pressure, UV index, and wind direction &amp; speed - updated in real time.</p>
+                    <div class="d-flex flex-wrap gap-1">
+                        <span class="badge rounded-pill" style="background:rgba(var(--bs-info-rgb),.1);color:var(--bs-info);font-weight:500">Temp</span>
+                        <span class="badge rounded-pill" style="background:rgba(var(--bs-warning-rgb),.1);color:var(--bs-warning);font-weight:500">Humidity</span>
+                        <span class="badge rounded-pill" style="background:rgba(var(--bs-primary-rgb),.1);color:var(--bs-primary);font-weight:500">Pressure</span>
+                        <span class="badge rounded-pill" style="background:rgba(var(--bs-info-rgb),.1);color:var(--bs-info);font-weight:500">UV</span>
+                        <span class="badge rounded-pill" style="background:rgba(var(--bs-warning-rgb),.1);color:var(--bs-warning);font-weight:500">Wind</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" id="forecast">
+                <div class="feat-card">
+                    <div class="feat-icon" style="background:rgba(var(--bs-warning-rgb),.1);color:var(--bs-warning)"><i class="bi bi-calendar-week"></i></div>
+                    <h6 class="fw-bold mb-1">7-Day Forecast</h6>
+                    <p class="small mb-2" style="color:var(--bs-secondary-color)">From today through the week - plan ahead with daily highs, lows, and conditions.</p>
+                    <div class="d-flex gap-1 overflow-hidden" id="forecastStrip"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feat-card">
+                    <div class="feat-icon" style="background:rgba(var(--bs-primary-rgb),.1);color:var(--bs-primary)"><i class="bi bi-calendar3"></i></div>
+                    <h6 class="fw-bold mb-1">Calendar Archive</h6>
+                    <p class="small mb-2" style="color:var(--bs-secondary-color)">Browse any past date to review full weather reports. Dots mark days with recorded data.</p>
+                    <div class="cal-grid" id="calGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-4 anim-up d4">
+    <div class="container">
+        <div class="guest-card">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-5">
+                    <h5 class="fw-bold mb-1"><i class="bi bi-shield-lock me-2" style="color:var(--bs-warning)"></i>More data with a free account</h5>
+                    <p class="small mb-0" style="color:var(--bs-secondary-color)">
+                        Guests see basic conditions. Sign up on the weather dashboard to unlock atmospheric pressure, UV index, and detailed wind data.
+                    </p>
+                </div>
+                <div class="col-lg-3">
+                    <p class="small fw-semibold mb-1" style="color:var(--bs-success)">Guest access</p>
+                    <div class="guest-item"><i class="bi bi-check-circle-fill ic-ok"></i> Temperature</div>
+                    <div class="guest-item"><i class="bi bi-check-circle-fill ic-ok"></i> Min &amp; Max Temps</div>
+                    <div class="guest-item"><i class="bi bi-check-circle-fill ic-ok"></i> Humidity</div>
+                </div>
+                <div class="col-lg-4">
+                    <p class="small fw-semibold mb-1" style="color:var(--bs-warning)">Unlocked with account</p>
+                    <div class="guest-item"><i class="bi bi-lock-fill ic-lock"></i> Atmospheric Pressure</div>
+                    <div class="guest-item"><i class="bi bi-lock-fill ic-lock"></i> UV Index</div>
+                    <div class="guest-item"><i class="bi bi-lock-fill ic-lock"></i> Wind Direction &amp; Speed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="stats" class="py-4">
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-md-7">
+                <div class="chart-card">
+                    <div class="chart-title"><i class="bi bi-graph-up me-1" style="color:var(--bs-info)"></i>Temperature Trend - Past 7 Days</div>
+                    <svg viewBox="0 0 520 170" width="100%" style="overflow:visible">
+                        <defs>
+                            <linearGradient id="aGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="var(--bs-info)" stop-opacity="0.2"/>
+                                <stop offset="100%" stop-color="var(--bs-info)" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+                        <line x1="40" y1="20" x2="500" y2="20" class="chart-grid"/>
+                        <line x1="40" y1="60" x2="500" y2="60" class="chart-grid"/>
+                        <line x1="40" y1="100" x2="500" y2="100" class="chart-grid"/>
+                        <line x1="40" y1="140" x2="500" y2="140" class="chart-grid"/>
+                        <text x="32" y="24" class="chart-lbl" text-anchor="end">30°</text>
+                        <text x="32" y="64" class="chart-lbl" text-anchor="end">24°</text>
+                        <text x="32" y="104" class="chart-lbl" text-anchor="end">18°</text>
+                        <text x="32" y="144" class="chart-lbl" text-anchor="end">12°</text>
+                        <path d="M60,72 L133,56 L206,84 L279,40 L352,64 L425,32 L498,48 L498,140 L60,140Z" fill="url(#aGrad)"/>
+                        <polyline points="60,72 133,56 206,84 279,40 352,64 425,32 498,48" class="chart-line"/>
+                        <circle cx="60" cy="72" r="4" class="chart-dot"/>
+                        <circle cx="133" cy="56" r="4" class="chart-dot"/>
+                        <circle cx="206" cy="84" r="4" class="chart-dot"/>
+                        <circle cx="279" cy="40" r="4" class="chart-dot"/>
+                        <circle cx="352" cy="64" r="4" class="chart-dot"/>
+                        <circle cx="425" cy="32" r="4" class="chart-dot"/>
+                        <circle cx="498" cy="48" r="4" class="chart-dot"/>
+                        <text x="60" y="158" class="chart-lbl" text-anchor="middle">Mon</text>
+                        <text x="133" y="158" class="chart-lbl" text-anchor="middle">Tue</text>
+                        <text x="206" y="158" class="chart-lbl" text-anchor="middle">Wed</text>
+                        <text x="279" y="158" class="chart-lbl" text-anchor="middle">Thu</text>
+                        <text x="352" y="158" class="chart-lbl" text-anchor="middle">Fri</text>
+                        <text x="425" y="158" class="chart-lbl" text-anchor="middle">Sat</text>
+                        <text x="498" y="158" class="chart-lbl" text-anchor="middle">Sun</text>
+                    </svg>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="chart-card">
+                    <div class="chart-title"><i class="bi bi-bar-chart-fill me-1" style="color:var(--bs-warning)"></i>Humidity &amp; Pressure - Today</div>
+                    <svg viewBox="0 0 380 170" width="100%" style="overflow:visible">
+                        <text x="95" y="14" class="chart-sec" text-anchor="middle">Humidity %</text>
+                        <rect x="30" y="28" width="28" height="112" rx="4" class="chart-bar-i-bg"/>
+                        <rect x="30" y="72" width="28" height="68" rx="4" class="chart-bar-i"/>
+                        <text x="44" y="152" class="chart-lbl-sm" text-anchor="middle">6AM</text>
+                        <rect x="65" y="28" width="28" height="112" rx="4" class="chart-bar-i-bg"/>
+                        <rect x="65" y="56" width="28" height="84" rx="4" class="chart-bar-i"/>
+                        <text x="79" y="152" class="chart-lbl-sm" text-anchor="middle">9AM</text>
+                        <rect x="100" y="28" width="28" height="112" rx="4" class="chart-bar-i-bg"/>
+                        <rect x="100" y="44" width="28" height="96" rx="4" class="chart-bar-i"/>
+                        <text x="114" y="152" class="chart-lbl-sm" text-anchor="middle">12PM</text>
+                        <rect x="135" y="28" width="28" height="112" rx="4" class="chart-bar-i-bg"/>
+                        <rect x="135" y="60" width="28" height="80" rx="4" class="chart-bar-i"/>
+                        <text x="149" y="152" class="chart-lbl-sm" text-anchor="middle">3PM</text>
+                        <line x1="185" y1="22" x2="185" y2="150" class="chart-grid"/>
+                        <text x="282" y="14" class="chart-sec" text-anchor="middle">Pressure hPa</text>
+                        <rect x="210" y="28" width="28" height="112" rx="4" class="chart-bar-w-bg"/>
+                        <rect x="210" y="38" width="28" height="102" rx="4" class="chart-bar-w"/>
+                        <text x="224" y="152" class="chart-lbl-sm" text-anchor="middle">6AM</text>
+                        <rect x="248" y="28" width="28" height="112" rx="4" class="chart-bar-w-bg"/>
+                        <rect x="248" y="42" width="28" height="98" rx="4" class="chart-bar-w"/>
+                        <text x="262" y="152" class="chart-lbl-sm" text-anchor="middle">9AM</text>
+                        <rect x="286" y="28" width="28" height="112" rx="4" class="chart-bar-w-bg"/>
+                        <rect x="286" y="34" width="28" height="106" rx="4" class="chart-bar-w"/>
+                        <text x="300" y="152" class="chart-lbl-sm" text-anchor="middle">12PM</text>
+                        <rect x="324" y="28" width="28" height="112" rx="4" class="chart-bar-w-bg"/>
+                        <rect x="324" y="40" width="28" height="100" rx="4" class="chart-bar-w"/>
+                        <text x="338" y="152" class="chart-lbl-sm" text-anchor="middle">3PM</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

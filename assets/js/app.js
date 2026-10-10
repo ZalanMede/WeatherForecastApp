@@ -1,47 +1,61 @@
 var html = document.documentElement;
-let main = document.querySelector('main');
+let main = document.querySelector("main");
 
-async function navigate(page, viewType, sleepTime=0) {
-    if (sleepTime > 0) {
-        await new Promise(e => setTimeout(e, sleepTime));
-    }
+async function navigate(page, viewType, sleepTime = 0) {
+  if (sleepTime > 0) {
+    await new Promise((e) => setTimeout(e, sleepTime));
+  }
 
-    main.innerHTML = await (await fetch(`views/${viewType}/${page}.html`)).text();
-    console.log(`Navigating to... ${viewType}/${page}`);
-    switch (page) {
-        case "weather":
-            loadWeather(viewType == "user" ? true : false);
-            break;
-        default:
-            console.log("NOT RUN");
-            break;
-    }
+  main.innerHTML = await (await fetch(`views/${viewType}/${page}.html`)).text();
+  console.log(`Navigating to... ${viewType}/${page}`);
+  switch (page) {
+    case "home":
+      loadHomeElements();
+      break;
+    case "weather":
+      loadWeather(viewType == "user" ? true : false);
+      break;
+    default:
+      console.log("NOT RUN");
+      break;
+  }
 }
 
 function toggleTheme() {
-    let isDarkTheme = (html.getAttribute('data-bs-theme') === 'dark' ? true : false);
-    html.setAttribute('data-bs-theme', (isDarkTheme == true ? 'light' : 'dark'));
-    localStorage.setItem('SCThemeIsDark', (isDarkTheme == true ? 'dark' : 'light'));
+  let isDarkTheme = html.getAttribute("data-bs-theme") === "dark" ? true : false;
+  html.setAttribute("data-bs-theme", isDarkTheme == true ? "light" : "dark");
+  localStorage.setItem("SCThemeIsDark", isDarkTheme == true ? "dark" : "light");
 
-    const icon = document.querySelector('#themeToggleBtn i');
-    icon.className = isDarkTheme ? 'bi bi-moon-fill' : 'bi bi-sun-fill';
+  const icon = document.querySelector("#themeToggleBtn i");
+  icon.className = isDarkTheme ? "bi bi-moon-fill" : "bi bi-sun-fill";
 }
 
 function loadTheme() {
-    let isDark = localStorage.getItem('SCThemeIsDark');
-    if (localStorage.getItem('SCThemeIsDark') != undefined) {
-        if (isDark == 'light') {
-            toggleTheme();
-        }
+  let isDark = localStorage.getItem("SCThemeIsDark");
+  if (localStorage.getItem("SCThemeIsDark") != undefined) {
+    if (isDark == "light") {
+      toggleTheme();
     }
+  }
 }
 
-function logOut() {
-    console.log("LOGGING OUT");
+/* Message showing */
+function showMsg(type, msg) {
+  const toastMsgEl = document.getElementById("toastMsg");
+  const toastEl = document.getElementById("toast");
+  toastMsgEl.textContent = msg;
+
+  toastEl.style.background = `var(--bs-${type})`
+
+  new bootstrap.Toast(toastEl, {
+    delay: 2000,
+  }).show();
 }
 
 // -- Main --
 
 loadTheme();
 
-navigate('home', "guest");
+navigate("home", "guest");
+
+setMenuItems('guest');
