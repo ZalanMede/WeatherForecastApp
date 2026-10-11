@@ -115,6 +115,30 @@ async function updatePass() {
   }
 }
 
+async function deleteAccount() {
+  let userID = loadUser() ? loadUser().ID : 0;
+  let loadedUserID = loadUser() ? loadUser().ID : 0;
+    
+    const response = await fetch(`http://localhost:3000/users/${userID}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            luid: loadedUserID,
+        }),
+    });
+
+    if (response.status != 200) {
+        const res = await response.json();
+        showMsg("danger", res.error);
+    } else {
+        const msg = await response.json();
+        showMsg("success", msg.message);
+        logOut();
+    }
+}
+
 function storeUser(user) {
   sessionStorage.setItem("SCU", JSON.stringify(user));
 }

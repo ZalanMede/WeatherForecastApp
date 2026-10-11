@@ -34,3 +34,29 @@
         <button type="button" class="btn btn-primary mb-3" onclick="updatePass()"><i class="bi bi-arrow-clockwise"></i> &nbsp;Update Password</button>
     </div>
 </div>
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="text-danger">DANGER ZONE</h3>
+        <h6 class="text-danger-emphasis">Delete your account</h6>
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete account</button>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteAccountModalLabel">Delete account?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you <b>ABSOLUTELY SURE</b> you want to delete your account?<br>
+        This action <b>cannot be undone!</b></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">I changed my mind</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="deleteAccount()">Yes I am absolutely sure!</button>
+      </div>
+    </div>
+  </div>
+</div

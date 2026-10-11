@@ -56,6 +56,4 @@ function showMsg(type, msg) {
 
 loadTheme();
 
-navigate("home", "guest");
-
-setMenuItems('guest');
+loginCheck()
