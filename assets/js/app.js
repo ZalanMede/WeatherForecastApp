@@ -15,6 +15,9 @@ async function navigate(page, viewType, sleepTime = 0) {
     case "weather":
       loadWeather(viewType == "user" ? true : false);
       break;
+    case "users":
+      getAllUsers();
+      break;
     default:
       console.log("NOT RUN");
       break;
