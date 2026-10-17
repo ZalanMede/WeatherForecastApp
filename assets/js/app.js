@@ -21,6 +21,9 @@ async function navigate(page, viewType, sleepTime = 0) {
     case "users":
       getAllUsers();
       break;
+    case "users":
+      getAllUsers();
+      break;
     default:
       console.log("NOT RUN");
       break;
