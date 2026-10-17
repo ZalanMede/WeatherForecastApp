@@ -5,7 +5,9 @@
     border-color 0.2s ease;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   display: flex;
@@ -554,4 +556,57 @@ main {
   --bs-popover-body-color: var(--bs-body-color);
   --bs-popover-header-bg: var(--bs-tertiary-bg);
   --bs-popover-header-color: var(--bs-body-color);
+}
+
+/* Forecast styles */
+
+.fc.fc {
+  --fc-page-bg-color: transparent;
+  --fc-border-color: var(--bs-border-color);
+  --fc-neutral-bg-color: var(--bs-secondary-bg);
+  --fc-today-bg-color: rgba(13, 110, 253, 0.07);
+  --fc-highlight-color: rgba(13, 110, 253, 0.1);
+  font-size: 0.875rem;
+}
+[data-bs-theme="dark"] .fc.fc {
+  --fc-today-bg-color: rgba(120, 162, 255, 0.16);
+  --fc-highlight-color: rgba(120, 162, 255, 0.22);
+}
+.card .fc .fc-toolbar-title {
+  font-size: 1.1rem;
+}
+.fc .fc-event {
+  cursor: pointer;
+  border-radius: 0.35rem;
+  font-weight: 500;
+}
+.fc .fc-event:hover {
+  opacity: 0.85;
+}
+
+/* Keep action buttons on one line inside the table */
+.table td .btn {
+  white-space: nowrap;
+}
+
+/* Weather badge: subtle outline so light badges (e.g. "Snow") stay
+    visible on light backgrounds; adapts to dark mode */
+.wx-chip {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+[data-bs-theme="dark"] .wx-chip {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Table header follows the active theme (var instead of .table-light,
+    which would stay white in dark mode) */
+#forecastTable thead th {
+  background-color: var(--bs-tertiary-bg);
+}
+
+/* Compact chips inside the modal ("also on this day" hints) */
+#sameDayHint .btn {
+  --bs-btn-padding-y: 0.05rem;
+  --bs-btn-padding-x: 0.45rem;
+  font-size: 0.75rem;
 }

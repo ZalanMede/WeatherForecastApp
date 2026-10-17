@@ -4,7 +4,7 @@
             <div class="card h-100 bg-body border-secondary-subtle">
                 <div class="card-body d-flex flex-column justify-content-center">
                     <h6 class="card-title text-body-secondary text-uppercase fw-bold small mb-1">Location</h6>
-                    <h5 class="text-body mb-2">San Francisco, CA</h5>
+                    <h5 class="text-body mb-2" id="locationStr">Baja</h5>
                     <button class="btn btn-outline-secondary btn-sm mt-2 align-self-start" data-bs-toggle="modal" data-bs-target="#locationModal">
                         <i class="bi bi-geo-alt"></i> Change Location
                     </button>
@@ -19,9 +19,9 @@
                     <div class="d-flex align-items-center mt-2">
                         <i class="bi bi-wind text-primary fs-2 me-2"></i>
                         <div>
-                            <span class="fs-4 fw-bold text-body">18</span>
+                            <span class="fs-4 fw-bold text-body" id="windSpeedValue">--</span>
                             <span class="text-body-secondary small">km/h</span>
-                            <div class="text-body-secondary small mt-1"><i class="bi bi-compass"></i> NW Direction</div>
+                            <div class="text-body-secondary small mt-1"><i class="bi bi-compass"></i> <span id="windDirectionValue">--</span> Direction</div>
                         </div>
                     </div>
                 </div>
@@ -35,17 +35,17 @@
                     <div class="row text-center mt-2">
                         <div class="col-4 border-end border-secondary-subtle">
                             <i class="bi bi-droplet-half text-info fs-5"></i>
-                            <div class="fw-bold text-body small mt-1">65%</div>
+                            <div class="fw-bold text-body small mt-1"><span id="humidityValue">--</span>%</div>
                             <small class="text-body-secondary" style="font-size: 0.65rem;">Humidity</small>
                         </div>
                         <div class="col-4 border-end border-secondary-subtle">
                             <i class="bi bi-speedometer2 text-warning fs-5"></i>
-                            <div class="fw-bold text-body small mt-1">1013</div>
+                            <div class="fw-bold text-body small mt-1"><span id="pressureValue">--</span></div>
                             <small class="text-body-secondary" style="font-size: 0.65rem;">hPa</small>
                         </div>
                         <div class="col-4">
                             <i class="bi bi-sun text-danger fs-5"></i>
-                            <div class="fw-bold text-body small mt-1">5</div>
+                            <div class="fw-bold text-body small mt-1"><span id="uvValue">--</span></div>
                             <small class="text-body-secondary" style="font-size: 0.65rem;">UV Idx</small>
                         </div>
                     </div>
@@ -58,6 +58,8 @@
     <div id="forecast-container" class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-7 g-2">
     </div>
 
+    <div id="calendar" class="mt-4"></div>
+
 </div>
 
 <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
@@ -68,11 +70,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <input type="text" class="form-control" placeholder="Enter city or zip code">
+                <input type="text" id="enteredLocation" class="form-control" placeholder="Enter city or zip code">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save Changes</button>
+                <button type="button" class="btn btn-primary" onclick="setLocationStr()" data-bs-dismiss="modal">Save Changes</button>
             </div>
         </div>
     </div>

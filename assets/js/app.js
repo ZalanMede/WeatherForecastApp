@@ -13,7 +13,13 @@ async function navigate(page, viewType, sleepTime = 0) {
       loadHomeElements();
       break;
     case "weather":
-      loadWeather(viewType == "user" ? true : false);
+      loadWeather();
+      break;
+    case "forecasts":
+      initAdminForecasts();
+      break;
+    case "users":
+      getAllUsers();
       break;
     default:
       console.log("NOT RUN");
@@ -24,7 +30,7 @@ async function navigate(page, viewType, sleepTime = 0) {
 function toggleTheme() {
   let isDarkTheme = html.getAttribute("data-bs-theme") === "dark" ? true : false;
   html.setAttribute("data-bs-theme", isDarkTheme == true ? "light" : "dark");
-  localStorage.setItem("SCThemeIsDark", isDarkTheme == true ? "dark" : "light");
+  localStorage.setItem("SCThemeIsDark", isDarkTheme == true ? "light" : "dark");
 
   const icon = document.querySelector("#themeToggleBtn i");
   icon.className = isDarkTheme ? "bi bi-moon-fill" : "bi bi-sun-fill";
@@ -33,7 +39,7 @@ function toggleTheme() {
 function loadTheme() {
   let isDark = localStorage.getItem("SCThemeIsDark");
   if (localStorage.getItem("SCThemeIsDark") != undefined) {
-    if (isDark == "light") {
+    if (isDark == "dark") {
       toggleTheme();
     }
   }
