@@ -102,7 +102,7 @@ async function loadWeather() {
 
       const card = document.createElement("div");
       card.className =
-        "card h-100 bg-body border-secondary-subtle text-center compact-card";
+        "card h-100 bg-body border-secondary-subtle text-center compact-card weather-hover-card";
 
       const cardBody = document.createElement("div");
       cardBody.className =
@@ -185,6 +185,8 @@ async function loadWeather() {
 
     renderWeatherCalendar(calendarData, isLoggedIn);
 
+    updateChart(forecastData);
+
     if (isLoggedIn) {
       const popoverTriggerList = document.querySelectorAll(
         '[data-bs-toggle="popover"]',
@@ -207,6 +209,7 @@ async function loadWeather() {
   }
 }
 
+// Calendar ---
 let weatherCalendar = null;
 
 function renderWeatherCalendar(weatherData, isLoggedIn) {
@@ -333,6 +336,136 @@ function renderWeatherCalendar(weatherData, isLoggedIn) {
     calendarEl.appendChild(warning);
     showMsg("warning", message);
   }
+}
+
+const METRICS = [
+  { key: 'temp_min',           label: 'Temp min',      unit: '°C',   color: '#4dabf7' },
+  { key: 'temp_max',           label: 'Temp max',      unit: '°C',   color: '#fa5252' },
+  { key: 'precipitation',      label: 'Precipitation', unit: 'mm',   color: '#15aabf' },
+  { key: 'wind_speed',         label: 'Wind speed',    unit: 'km/h', color: '#51cf66' }
+];
+
+const WEATHER_CHARTS = [
+  {
+    canvasId: 'weatherTempChart',
+    metrics: METRICS.slice(0, 2),
+    axisTitle: 'Temperature (°C)'
+  },
+  {
+    canvasId: 'weatherOtherChart',
+    metrics: METRICS.slice(2),
+    axisTitle: 'Precipitation (mm) / Wind (km/h)'
+  }
+];
+
+const charts = new Map();
+
+function averageMetric(data, key) {
+  const values = data
+    .map(forecast => forecast[key])
+    .filter(value => value != null && value !== '')
+    .map(Number)
+    .filter(Number.isFinite);
+  if (!values.length) return '--';
+  return (values.reduce((total, value) => total + value, 0) / values.length).toFixed(1);
+}
+
+function updateChart(data) {
+  const labels = data.map(d => moment(d.date).format('MMM D'));
+  const temperatureAverage = document.getElementById('temperatureAverage');
+  if (temperatureAverage) {
+    temperatureAverage.textContent =
+      `Avg: ${averageMetric(data, 'temp_min')} °C - ${averageMetric(data, 'temp_max')} °C`;
+  }
+
+  const precipitationWindAverage = document.getElementById('precipitationWindAverage');
+  if (precipitationWindAverage) {
+    precipitationWindAverage.textContent =
+      `Avg: ${averageMetric(data, 'precipitation')} mm - ${averageMetric(data, 'wind_speed')} km/h`;
+  }
+
+  WEATHER_CHARTS.forEach(({ canvasId, metrics, axisTitle }) => {
+    const canvas = document.getElementById(canvasId);
+    let chart = charts.get(canvasId);
+
+    if (!canvas) {
+      chart?.destroy();
+      charts.delete(canvasId);
+      return;
+    }
+
+    if (chart && chart.canvas !== canvas) {
+      chart.destroy();
+      charts.delete(canvasId);
+      chart = undefined;
+    }
+
+    const datasets = metrics.map(metric => ({
+      label: metric.label,
+      data: data.map(d => d[metric.key]),
+      yAxisID: 'y',
+      borderColor: metric.color,
+      backgroundColor: metric.color,
+      pointBackgroundColor: metric.color,
+      borderWidth: 2,
+      pointRadius: 3,
+      tension: 0.35,
+      _meta: metric
+    }));
+
+    if (chart) {
+      chart.data.labels = labels;
+      chart.data.datasets = datasets;
+      chart.update();
+      return;
+    }
+
+    chart = new Chart(canvas, {
+      type: 'line',
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: {
+            ticks: { color: '#999', maxRotation: 0 },
+            grid: { color: 'rgba(128,128,128,.15)' }
+          },
+          y: {
+            position: 'left',
+            title: { display: true, text: axisTitle },
+            grid: { color: 'rgba(128,128,128,.15)' }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { usePointStyle: true, boxWidth: 8, boxHeight: 8, padding: 14 }
+          },
+          tooltip: {
+            callbacks: {
+              label: context =>
+                ` ${context.dataset.label}: ${context.parsed.y} ${context.dataset._meta.unit}`
+            }
+          }
+        }
+      }
+    });
+    charts.set(canvasId, chart);
+  });
+}
+
+function sampleData() {
+  const r = (a, b) => +(a + Math.random() * (b - a)).toFixed(1);
+  return Array.from({ length: 7 }, (_, i) => ({
+    date: moment().add(i, 'days').format('YYYY-MM-DD'),
+    location: 'Budapest',
+    temp_min: r(2, 9),
+    temp_max: r(14, 22),
+    precipitation_prob: Math.round(15 + Math.random() * 70),
+    wind_speed: r(5, 26)
+  }));
 }
 
 const DATETIME_FORMAT = "YYYY-MM-DD";
