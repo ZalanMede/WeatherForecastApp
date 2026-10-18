@@ -768,7 +768,7 @@ function initAdminForecasts() {
     fTMax.setCustomValidity("");
     const p = rowToPayload(row);
     fId.value = row.ID;
-    fDate.value = moment(p.date).format("YYYY-MM-DDTHH:mm");
+    fDate.value = moment(p.date).format("YYYY-MM-DD");
     fLoc.value = p.loc;
     fTMin.value = p.tMin;
     fTMax.value = p.tMax;

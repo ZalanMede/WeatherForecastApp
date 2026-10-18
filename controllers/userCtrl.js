@@ -319,13 +319,13 @@ function addUserRowToTableBody(element){
 
     // Last login
     const rowLastLogin = document.createElement("td");
-    rowLastLogin.innerHTML = element.last_login ? moment(element.last_login).fromNow() : never;
+    rowLastLogin.innerHTML = element.last_login ? moment(element.last_login).fromNow() : "Never";
 
     newDataRow.appendChild(rowLastLogin);
 
     // Updated at
     const rowLastEdit = document.createElement("td");
-    rowLastEdit.innerHTML = element.updated_at ? moment(element.updated_at).fromNow() : never;
+    rowLastEdit.innerHTML = element.updated_at ? moment(element.updated_at).fromNow() : "Never";
 
     newDataRow.appendChild(rowLastEdit);
 
