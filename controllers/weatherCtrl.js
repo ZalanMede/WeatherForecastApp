@@ -7,6 +7,12 @@ function getWeatherIcon(type) {
   return "bi-cloud-fill text-secondary";
 }
 
+function normalizeWeatherError(error) {
+  return {
+    error: error?.error ?? error?.message ?? String(error),
+  };
+}
+
 function forecastValue(value) {
   return value == null || value === "" ? "--" : escapeHtml(value);
 }
@@ -190,14 +196,14 @@ async function loadWeather() {
           }),
       );
     }
-  } catch (err) {
+  } catch (error) {
+    const err = normalizeWeatherError(error);
     updateCurrentWeather(null);
-    const message = err.message || "Could not load the forecast.";
-    forecastContainer.innerHTML = `<div class="col-12"><div class="alert alert-danger mb-0">${escapeHtml(message)}</div></div>`;
+    forecastContainer.innerHTML = `<div class="col-12"><div class="alert alert-danger mb-0">${escapeHtml(err.error)}</div></div>`;
     if (calendarEl) {
-      calendarEl.innerHTML = `<div class="alert alert-danger mb-0">${escapeHtml(message)}</div>`;
+      calendarEl.innerHTML = `<div class="alert alert-danger mb-0">${escapeHtml(err.error)}</div>`;
     }
-    showMsg("danger", message);
+    showMsg("danger", err.error);
   }
 }
 
@@ -210,8 +216,11 @@ function renderWeatherCalendar(weatherData, isLoggedIn) {
   if (!calendarEl) return;
 
   if (!window.FullCalendar) {
+    const message =
+      "FullCalendar could not be loaded. Please check the CDN links / your internet connection.";
     calendarEl.innerHTML =
-      '<div class="alert alert-warning mb-0">FullCalendar could not be loaded. Please check the CDN links / your internet connection.</div>';
+      `<div class="alert alert-warning mb-0">${message}</div>`;
+    showMsg("warning", message);
     return;
   }
 
@@ -309,9 +318,10 @@ function renderWeatherCalendar(weatherData, isLoggedIn) {
   weatherCalendar.render();
 
   if (invalidForecasts.length) {
+    const message = `${invalidForecasts.length} calendar forecast(s) could not be placed because they have no valid date.`;
     const warning = document.createElement("div");
     warning.className = "alert alert-warning mt-3 mb-0";
-    warning.textContent = `${invalidForecasts.length} calendar forecast(s) could not be placed because they have no valid date.`;
+    warning.textContent = message;
     const details = document.createElement("ul");
     details.className = "mb-0 mt-2";
     invalidForecasts.forEach(({ index, forecast }) => {
@@ -321,10 +331,11 @@ function renderWeatherCalendar(weatherData, isLoggedIn) {
     });
     warning.appendChild(details);
     calendarEl.appendChild(warning);
+    showMsg("warning", message);
   }
 }
 
-const DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
+const DATETIME_FORMAT = "YYYY-MM-DD";
 
 // Fast stuff cuz I'm lazy
 const $ = (id) => document.getElementById(id);
@@ -505,7 +516,7 @@ function initAdminForecasts() {
       r.created_at && r.updated_at
         ? ` title="Created: ${escapeHtml(moment(r.created_at).format("MMM D, YYYY HH:mm"))} &#10;Updated: ${escapeHtml(moment(r.updated_at).format("MMM D, YYYY HH:mm"))}"`
         : "";
-    return `<td${tip}><div class="fw-semibold">${main}</div><div class="small text-body-secondary">${sub}</div></td>`;
+    return `<td${tip}><div class="fw-semibold">${main}</div></td>`;
   }
 
   function rowHtml(r) {
@@ -539,8 +550,8 @@ function initAdminForecasts() {
     const q = searchInput.value.trim().toLowerCase();
     const sorted = [...forecasts].sort(
       (a, b) =>
-        moment(a.date).valueOf() - moment(b.date).valueOf() ||
-        String(a.location).localeCompare(String(b.location)),
+        moment(b.date).valueOf() - moment(a.date).valueOf() ||
+        String(b.location).localeCompare(String(a.location)),
     );
     const rows = q
       ? sorted.filter(
@@ -590,8 +601,11 @@ function initAdminForecasts() {
   function initCalendar() {
     colorScheme = localStorage.getItem("SCThemeIsDark") || "light";
     if (!window.FullCalendar) {
+      const message =
+        "FullCalendar could not be loaded. Please check the CDN links / your internet connection.";
       calendarEl.innerHTML =
-        '<div class="alert alert-warning mb-0">FullCalendar could not be loaded. Please check the CDN links / your internet connection.</div>';
+        `<div class="alert alert-warning mb-0">${message}</div>`;
+      showMsg("warning", message);
       return;
     }
     calendar = new FullCalendar.Calendar(calendarEl, {
@@ -663,7 +677,8 @@ function initAdminForecasts() {
           : [];
       forecasts = normalizeRows(list);
       renderAll();
-    } catch (err) {
+    } catch (error) {
+      const err = normalizeWeatherError(error);
       forecasts = [];
       renderAll();
       tbody.innerHTML = infoRowHtml(
@@ -802,10 +817,11 @@ function initAdminForecasts() {
       const id = Number(btn.dataset.id);
       armConfirm(btn, async () => {
         try {
-          await deleteForecast(id);
+          const response = await deleteForecast(id);
           removeLocal(id);
-          showMsg("success", "Forecast deleted successfully.");
-        } catch (err) {
+          showMsg("success", response.message);
+        } catch (error) {
+          const err = normalizeWeatherError(error);
           showMsg("danger", err.error);
         }
       });
@@ -827,20 +843,16 @@ function initAdminForecasts() {
     const payload = collectPayload();
     setSaving(true);
     try {
-      const savedRow = id
+      const response = id
         ? await updateForecast(id, payload)
         : await createForecast(payload);
-      upsertLocal(normalizeRows([savedRow])[0]);
+      upsertLocal(normalizeRows([response])[0]);
       modal.hide();
-      showMsg(
-        "success",
-        id
-          ? "Forecast updated successfully."
-          : "Forecast created successfully.",
-      );
+      showMsg("success", response.message);
       loadForecasts();
       renderAll();
-    } catch (err) {
+    } catch (error) {
+      const err = normalizeWeatherError(error);
       showMsg("danger", err.error);
     } finally {
       setSaving(false);
@@ -854,11 +866,12 @@ function initAdminForecasts() {
     armConfirm(deleteBtn, async () => {
       setSaving(true);
       try {
-        await deleteForecast(id);
+        const response = await deleteForecast(id);
         modal.hide();
         removeLocal(id);
-        showMsg("Forecast deleted successfully.");
-      } catch (err) {
+        showMsg("success", response.message);
+      } catch (error) {
+        const err = normalizeWeatherError(error);
         showMsg("danger", err.error);
       } finally {
         setSaving(false);
@@ -903,22 +916,20 @@ function initAdminForecasts() {
 
 // Get all forecasts -------------------------------------------------
 async function fetchForecasts() {
-  const res = await fetch(`http://localhost:3000/forecast/admin`, {
+  const response = await fetch(`http://localhost:3000/forecast/admin`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
       luid: loadUser().ID,
     }),
   });
-  if (res.status != 200)
-    throw new Error(`Loading forecasts failed (HTTP ${res.status})`);
-  return await res.json();
+  return await getForecastResponse(response);
 }
 
 // Create a forecast --------------------------------------------
 async function createForecast(data) {
   console.log(data);
-  const res = await fetch(`http://localhost:3000/forecast`, {
+  const response = await fetch(`http://localhost:3000/forecast`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
@@ -926,30 +937,27 @@ async function createForecast(data) {
       data,
     }),
   });
-  if (res.status != 200)
-    throw new Error(`Creating the forecast failed (HTTP ${res.status})`);
-  return await res.json();
+  return await getForecastResponse(response);
 }
 
 // Update a forecast ---------------------------------------------
 async function updateForecast(id, data) {
   console.log(id);
-  const res = await fetch(`http://localhost:3000/forecast`, {
+  const response = await fetch(`http://localhost:3000/forecast`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
+      luid: loadUser().ID,
       forecastID: id,
       data,
     }),
   });
-  if (res.status != 200)
-    throw new Error(`Updating the forecast failed (HTTP ${res.status})`);
-  return await res.json();
+  return await getForecastResponse(response);
 }
 
 // Delete forecast ---------------------------------------------------
 async function deleteForecast(id) {
-  const res = await fetch(`http://localhost:3000/forecast`, {
+  const response = await fetch(`http://localhost:3000/forecast`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
@@ -957,14 +965,12 @@ async function deleteForecast(id) {
       forecastID: id,
     }),
   });
-  if (res.status != 200)
-    throw new Error(`Deleting the forecast failed (HTTP ${res.status})`);
-  return true;
+  return await getForecastResponse(response);
 }
 
 // Get forecast calendar for user ---------------------------------------------------
 async function getUserForecastCalendar(location) {
-  const res = await fetch(`http://localhost:3000/forecast/user/calendar`, {
+  const response = await fetch(`http://localhost:3000/forecast/user/calendar`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
@@ -972,14 +978,12 @@ async function getUserForecastCalendar(location) {
       location
     }),
   });
-  if (res.status != 200)
-    throw new Error(`Loading forecasts failed (HTTP ${res.status})`);
-  return await res.json();
+  return await getForecastResponse(response);
 }
 
 // Get forecast for user ---------------------------------------------------
 async function getUserForecast(location, datetime) {
-  const res = await fetch(`http://localhost:3000/forecast/user`, {
+  const response = await fetch(`http://localhost:3000/forecast/user`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
@@ -988,29 +992,29 @@ async function getUserForecast(location, datetime) {
       location
     }),
   });
-  if (res.status != 200)
-    throw new Error(`Loading forecasts failed (HTTP ${res.status})`);
-  return await res.json();
+  return await getForecastResponse(response);
 }
 
 async function getGuestForecast(location, datetime) {
-  const res = await fetch(`http://localhost:3000/forecast/guest`, {
+  const response = await fetch(`http://localhost:3000/forecast/guest`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({ datetime, location }),
   });
-  if (res.status != 200)
-    throw new Error(`Loading guest forecasts failed (HTTP ${res.status})`);
-  return await res.json();
+  return await getForecastResponse(response);
 }
 
 async function getGuestForecastCalendar(location) {
-  const res = await fetch(`http://localhost:3000/forecast/guest/calendar`, {
+  const response = await fetch(`http://localhost:3000/forecast/guest/calendar`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({ location }),
   });
-  if (res.status != 200)
-    throw new Error(`Loading guest forecast calendar failed (HTTP ${res.status})`);
-  return await res.json();
+  return await getForecastResponse(response);
+}
+
+async function getForecastResponse(response) {
+  const result = await response.json();
+  if (response.status !== 200) throw result;
+  return result;
 }

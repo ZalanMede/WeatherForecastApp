@@ -1,5 +1,4 @@
 <div class="container-xxl py-4">
-  <!-- ===================== Page title + toolbar ===================== -->
   <div
     class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4"
   >
@@ -30,7 +29,6 @@
     </div>
   </div>
 
-  <!-- ===================== List of all forecasts ===================== -->
   <div class="card shadow-sm mb-4">
     <div
       class="card-header bg-body-tertiary d-flex align-items-center gap-2 py-2"
@@ -62,7 +60,6 @@
           </tr>
         </thead>
         <tbody id="forecastTableBody">
-          <!-- rows rendered by JS -->
         </tbody>
       </table>
     </div>
@@ -71,7 +68,6 @@
     </nav>
   </div>
 
-  <!-- ===================== Calendar ===================== -->
   <div class="card shadow-sm">
     <div
       class="card-header bg-body-tertiary d-flex align-items-center gap-2 py-2"
@@ -91,9 +87,7 @@
     </div>
   </div>
 </div>
-<!-- /.container-xxl -->
 
-<!-- ===================== Shared create / edit / delete modal ===================== -->
 <div
   class="modal fade"
   id="forecastModal"
@@ -116,19 +110,18 @@
           ></button>
         </div>
         <div class="modal-body">
-          <input type="hidden" id="fId" value="" />
+          <input type="hidden" id="fId" value=""/>
           <div class="row g-3">
             <div class="col-12 col-md-4">
               <label class="form-label" for="fDate">Date &amp; time</label>
               <input
-                type="datetime-local"
+                type="date"
                 class="form-control"
                 id="fDate"
                 required
               />
               <div class="invalid-feedback">Please pick a date and time.</div>
               <div id="sameDayHint" class="mt-2 d-none" aria-live="polite">
-                <!-- same-day chips injected by JS -->
               </div>
             </div>
 
@@ -332,7 +325,6 @@
           </div>
         </div>
         <div class="modal-footer">
-          <!-- Delete button: only visible while editing an existing forecast -->
           <button
             type="button"
             class="btn btn-outline-danger me-auto d-none"
@@ -355,11 +347,3 @@
     </div>
   </div>
 </div>
-
-<!-- ===================== Toast feedback ===================== -->
-<div
-  class="toast-container position-fixed top-0 end-0 p-3"
-  id="toastWrap"
-  aria-live="polite"
-  aria-atomic="false"
-></div>

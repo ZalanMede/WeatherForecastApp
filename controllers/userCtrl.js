@@ -317,6 +317,12 @@ function addUserRowToTableBody(element){
 
     newDataRow.appendChild(rowBadge);
 
+    // Last login
+    const rowLastLogin = document.createElement("td");
+    rowLastLogin.innerHTML = element.last_login ? moment(element.last_login).fromNow() : never;
+
+    newDataRow.appendChild(rowLastLogin);
+
     // Updated at
     const rowLastEdit = document.createElement("td");
     rowLastEdit.innerHTML = element.updated_at ? moment(element.updated_at).fromNow() : never;
@@ -325,7 +331,7 @@ function addUserRowToTableBody(element){
 
     // Created at
     const rowCreated = document.createElement("td");
-    rowCreated.innerHTML = moment(element.created_at).format("YYYY.MM.DD - H:m");
+    rowCreated.innerHTML = moment(element.created_at).format("YYYY.MM.DD - HH:mm");
 
     newDataRow.appendChild(rowCreated);
 
@@ -357,7 +363,7 @@ function addUserRowToTableBody(element){
     const operationsHolder = document.createElement("div");
     operationsHolder.classList.add("row", "hasHoverOnChildBtn");
     let isDisabled = element.ID == loadUser().ID ? "disabled" : "";
-    operationsHolder.innerHTML = `<button type="button" class="btn btn-primary col-3 mx-2" ${isDisabled} data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="setModalUserData(this, \'info\')" title="Show sensitive information"><i class="bi bi-info-circle"></i></button> <button type="button" class="btn btn-warning col-3 mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal" ${isDisabled} onclick="setModalUserData(this, \'edit\')"><i class="bi bi-pencil-fill"></i></button> <button type="button" class="btn btn-danger col-3 mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal" ${isDisabled} onclick="setModalUserData(this, \'delete\')"><i class="bi bi-trash3-fill"></i></button>`
+    operationsHolder.innerHTML = `<button type="button" class="btn btn-primary col-4 mx-2" ${isDisabled} data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="setModalUserData(this, \'info\')" title="Show sensitive information"><i class="bi bi-info-circle"></i></button> <button type="button" class="btn btn-danger col-4 mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal" ${isDisabled} onclick="setModalUserData(this, \'delete\')"><i class="bi bi-trash3-fill"></i></button>`
     rowOperations.appendChild(operationsHolder);
 
     newDataRow.appendChild(rowOperations);
@@ -367,7 +373,6 @@ function addUserRowToTableBody(element){
 }
 
 // Modal
-
 
 async function deleteUser(el) {
     const userID = el.currentTarget.parentElement.parentElement.parentElement.children[0].innerHTML;
@@ -391,10 +396,6 @@ async function deleteUser(el) {
         const msg = await response.json();
         showMsg("success", "User deleted successfully!", msg.message);
     }
-}
-
-function editModalUser(){
-    showMsg("warning", "NOPE!", "I AM NOT WILLING TO DO THIS RIGHT NOW :D");
 }
 
 async function deleteModalUser(el){
@@ -466,41 +467,6 @@ async function setModalUserData(el, requestType) {
                 <p>Login count:\t${userData.results.login_count}</p>
                 <p>Is the user active?:\t${(userData.results.is_active == 1 ? '<i class="bi bi-check-lg"></i>' : '<i class="bi bi-ban"></i>')}</p>
                 `;
-            }
-            break;
-        case "edit":
-            modalLabel.innerHTML = "Edit user information";
-            modalConfirmBtn.innerHTML = "Confirm edit";
-            modalConfirmBtn.classList.remove("btn-secondary");
-            modalConfirmBtn.classList.remove("btn-danger");
-            modalConfirmBtn.classList.add("btn-warning");
-
-            const response1 = await fetch(`http://localhost:3000/admin/${userToEditID}/`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            
-            if (response1.status != 200) {
-                const res = await response1.json();
-                showMsg("danger", "ERROR!", res.error)
-            } else {
-                const userData = await response1.json();
-                modalBody.innerHTML = `
-                <p>ID:\t${userData.results.ID}</p>
-                <p>Name:\t${userData.results.name}</p>
-                <p>E-mail:\t${userData.results.email}</p>
-                <p>Password:\t************************</p>
-                <p>Role:\t${userData.results.role}</p>
-                <p>Created at:\t${userData.results.created_at}</p>
-                <p>Last information updated:\t${userData.results.updated_at}</p>
-                <p>Last login:\t${userData.results.last_login}</p>
-                <p>Login count:\t${userData.results.login_count}</p>
-                <p>Is the user active?:\t${(userData.results.is_active == 1 ? '<i class="bi bi-check-lg"></i>' : '<i class="bi bi-ban"></i>')}</p>
-                `;
-
-                modalConfirmBtn.addEventListener("click", editModalUser);
             }
             break;
         case "delete":
